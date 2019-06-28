@@ -52,7 +52,7 @@ public class DefaultLwM2mNodeEncoder implements LwM2mNodeEncoder {
      * Create {@link DefaultLwM2mNodeEncoder} without support of old TLV and JSON code.
      */
     public DefaultLwM2mNodeEncoder() {
-        this(new DefaultLwM2mValueConverter());
+        this(new NoValueConverter());
     }
 
     public DefaultLwM2mNodeEncoder(LwM2mValueConverter converter) {
@@ -68,7 +68,7 @@ public class DefaultLwM2mNodeEncoder implements LwM2mNodeEncoder {
      * @param supportDeprecatedContentFormat True to accept to encode old code.
      */
     public DefaultLwM2mNodeEncoder(boolean supportDeprecatedContentFormat) {
-        this(new DefaultLwM2mValueConverter(), supportDeprecatedContentFormat);
+        this(new NoValueConverter(), supportDeprecatedContentFormat);
     }
 
     public DefaultLwM2mNodeEncoder(LwM2mValueConverter converter, boolean supportDeprecatedContentFormat) {
