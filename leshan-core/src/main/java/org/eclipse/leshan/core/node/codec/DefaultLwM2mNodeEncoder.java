@@ -38,7 +38,7 @@ public class DefaultLwM2mNodeEncoder implements LwM2mNodeEncoder {
     private final LwM2mValueConverter converter;
 
     public DefaultLwM2mNodeEncoder() {
-        this(new DefaultLwM2mValueConverter());
+        this(new NoValueConverter());
     }
 
     public DefaultLwM2mNodeEncoder(LwM2mValueConverter converter) {
