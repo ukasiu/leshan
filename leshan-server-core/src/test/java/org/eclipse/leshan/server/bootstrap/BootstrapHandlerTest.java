@@ -56,18 +56,19 @@ public class BootstrapHandlerTest {
 
         final BootstrapConfigStore bsStore = new BootstrapConfigStore() {
             @Override
-            public BootstrapConfig get(String endpoint, Identity deviceIdentity) {
+            public BootstrapConfig get(String endpoint, Identity deviceIdentity, BootstrapSession session) {
                 return new BootstrapConfig();
             }
         };
 
-        BootstrapHandler bsHandler = new DefaultBootstrapHandler(bsStore, requestSender, bsSessionManager, new Executor() {
+        BootstrapHandler bsHandler = new DefaultBootstrapHandler(bsStore, requestSender, bsSessionManager,
+                new Executor() {
 
-            @Override
-            public void execute(Runnable command) {
-                command.run();
-            }
-        });
+                    @Override
+                    public void execute(Runnable command) {
+                        command.run();
+                    }
+                });
 
         bsHandler.bootstrap(Identity.psk(new InetSocketAddress(4242), "pskdentity"), new BootstrapRequest("enpoint"));
 
@@ -81,18 +82,19 @@ public class BootstrapHandlerTest {
 
         final BootstrapConfigStore bsStore = new BootstrapConfigStore() {
             @Override
-            public BootstrapConfig get(String endpoint, Identity deviceIdentity) {
+            public BootstrapConfig get(String endpoint, Identity deviceIdentity, BootstrapSession session) {
                 return new BootstrapConfig();
             }
         };
 
-        BootstrapHandler bsHandler = new DefaultBootstrapHandler(bsStore, requestSender, bsSessionManager, new Executor() {
+        BootstrapHandler bsHandler = new DefaultBootstrapHandler(bsStore, requestSender, bsSessionManager,
+                new Executor() {
 
-            @Override
-            public void execute(Runnable command) {
-                command.run();
-            }
-        });
+                    @Override
+                    public void execute(Runnable command) {
+                        command.run();
+                    }
+                });
 
         bsHandler.bootstrap(Identity.psk(new InetSocketAddress(4242), "pskdentity"), new BootstrapRequest("enpoint"));
 
