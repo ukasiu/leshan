@@ -35,6 +35,11 @@ import org.eclipse.leshan.core.californium.EndpointFactory;
 import org.eclipse.leshan.core.californium.Lwm2mEndpointContextMatcher;
 import org.eclipse.leshan.core.model.LwM2mModel;
 import org.eclipse.leshan.core.model.ObjectLoader;
+import org.eclipse.leshan.core.node.LwM2mNode;
+import org.eclipse.leshan.core.node.codec.DefaultLwM2mNodeDecoder;
+import org.eclipse.leshan.core.node.codec.DefaultLwM2mNodeEncoder;
+import org.eclipse.leshan.core.node.codec.LwM2mNodeDecoder;
+import org.eclipse.leshan.core.node.codec.LwM2mNodeEncoder;
 import org.eclipse.leshan.server.bootstrap.BootstrapConfig;
 import org.eclipse.leshan.server.bootstrap.BootstrapHandler;
 import org.eclipse.leshan.server.bootstrap.BootstrapHandlerFactory;
@@ -69,6 +74,9 @@ public class LeshanBootstrapServerBuilder {
     private LwM2mModel model;
     private NetworkConfig coapConfig;
     private Builder dtlsConfigBuilder;
+
+    private LwM2mNodeEncoder encoder;
+    private LwM2mNodeDecoder decoder;
 
     private PublicKey publicKey;
     private PrivateKey privateKey;
@@ -291,6 +299,28 @@ public class LeshanBootstrapServerBuilder {
     }
 
     /**
+     * <p>
+     * Set the {@link LwM2mNodeEncoder} which will encode {@link LwM2mNode} with supported content format.
+     * </p>
+     * By default the {@link DefaultLwM2mNodeEncoder} is used. It supports Text, Opaque, TLV and JSON format.
+     */
+    public LeshanBootstrapServerBuilder setEncoder(LwM2mNodeEncoder encoder) {
+        this.encoder = encoder;
+        return this;
+    }
+
+    /**
+     * <p>
+     * Set the {@link LwM2mNodeDecoder} which will decode data in supported content format to create {@link LwM2mNode}.
+     * </p>
+     * By default the {@link DefaultLwM2mNodeDecoder} is used. It supports Text, Opaque, TLV and JSON format.
+     */
+    public LeshanBootstrapServerBuilder setDecoder(LwM2mNodeDecoder decoder) {
+        this.decoder = decoder;
+        return this;
+    }
+
+    /**
      * Set the CoAP/Californium {@link NetworkConfig}.
      * <p>
      * For advanced CoAP setting, see {@link NetworkConfig.Keys} for more details.
@@ -393,6 +423,10 @@ public class LeshanBootstrapServerBuilder {
         if (coapConfig == null) {
             coapConfig = createDefaultNetworkConfig();
         }
+        if (encoder == null)
+            encoder = new DefaultLwM2mNodeEncoder();
+        if (decoder == null)
+            decoder = new DefaultLwM2mNodeDecoder();
 
         // handle dtlsConfig
         DtlsConnectorConfig dtlsConfig = null;
@@ -534,7 +568,7 @@ public class LeshanBootstrapServerBuilder {
         }
 
         return createBootstrapServer(unsecuredEndpoint, securedEndpoint, configStore, securityStore, sessionManager,
-                bootstrapHandlerFactory, model, coapConfig);
+                bootstrapHandlerFactory, model, coapConfig, encoder, decoder);
     }
 
     /**
@@ -551,12 +585,15 @@ public class LeshanBootstrapServerBuilder {
      * @param bsHandlerFactory the factory used to create {@link BootstrapHandler}.
      * @param model the LWM2M model used mainly used for data encoding.
      * @param coapConfig the CoAP configuration.
+     * @param decoder decoder used to decode response payload.
+     * @param encoder encode used to encode request payload.
      * @return the LWM2M Bootstrap server.
      */
     protected LeshanBootstrapServer createBootstrapServer(CoapEndpoint unsecuredEndpoint, CoapEndpoint securedEndpoint,
             BootstrapStore bsStore, BootstrapSecurityStore bsSecurityStore, BootstrapSessionManager bsSessionManager,
-            BootstrapHandlerFactory bsHandlerFactory, LwM2mModel model, NetworkConfig coapConfig) {
+            BootstrapHandlerFactory bsHandlerFactory, LwM2mModel model, NetworkConfig coapConfig,
+            LwM2mNodeEncoder encoder, LwM2mNodeDecoder decoder) {
         return new LeshanBootstrapServer(unsecuredEndpoint, securedEndpoint, bsStore, bsSecurityStore, bsSessionManager,
-                bsHandlerFactory, model, coapConfig);
+                bsHandlerFactory, model, coapConfig, encoder, decoder);
     }
 }
